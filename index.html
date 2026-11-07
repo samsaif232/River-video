@@ -1,0 +1,84 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:540px;height:960px;overflow:hidden;position:relative;background:#0b1220;font-family:'Nirmala UI','Bangla Sangam MN','Noto Sans Bengali','FreeSans','Noto Sans',sans-serif;color:#fff}
+.a{position:absolute}
+#sky{left:0;top:0;width:540px;height:340px;background:linear-gradient(#1e40af,#7dd3fc)}
+#sun{left:420px;top:60px;width:70px;height:70px;border-radius:50%;background:#fde68a;box-shadow:0 0 40px #fde68a}
+.cl{height:26px;width:90px;border-radius:20px;background:rgba(255,255,255,.75)}
+#far{left:0;top:200px;width:540px;height:150px;background:linear-gradient(#5fb865,#3d8f4a);border-bottom:6px solid #2d6e38}
+#riv{left:0;top:340px;width:540px;height:320px;background:linear-gradient(#1b7cc4,#0f5a9c)}
+#w1,#w2{left:0;width:540px;height:320px;top:340px}
+#w1{background:repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 28px,transparent 28px 90px);-webkit-mask:repeating-linear-gradient(0deg,#000 0 3px,transparent 3px 46px)}
+#w2{background:repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 18px,transparent 18px 70px);-webkit-mask:repeating-linear-gradient(0deg,transparent 0 22px,#000 22px 25px,transparent 25px 46px)}
+#near{left:0;top:654px;width:540px;height:190px;background:linear-gradient(#4aa356,#327a3d);border-top:6px solid #2d6e38}
+#panel{left:0;top:844px;width:540px;height:116px;background:#0b1220}
+#cap{left:20px;top:22px;width:500px;height:128px;border-radius:22px;background:rgba(2,6,23,.55);display:flex;align-items:center;justify-content:center;text-align:center;font-size:32px;font-weight:700;line-height:1.35;padding:0 18px}
+#boat{left:190px;width:160px;height:42px;background:linear-gradient(#a16207,#713f12);border-radius:4px 4px 70px 70px;border-top:6px solid #ca8a04}
+.p{width:64px;height:112px}
+.p .c{height:22px;font-size:13px;font-weight:700;text-align:center;line-height:22px;border-radius:11px;background:#fff;color:#0f172a;margin:0 3px}
+.p .h{width:30px;height:30px;border-radius:50%;background:#fcd9b0;margin:3px auto 0}
+.p .b{width:42px;height:50px;border-radius:14px 14px 6px 6px;margin:0 auto;text-align:center;font-size:26px;font-weight:800;line-height:50px;color:#fff}
+#ov{left:30px;top:350px;width:480px;height:290px;display:flex;flex-direction:column;justify-content:center;gap:12px;opacity:0}
+.card{background:rgba(2,6,23,.78);border-radius:18px;padding:14px 18px;font-size:25px;font-weight:700;text-align:center;line-height:1.35;border:3px solid transparent}
+.card.on{border-color:#fde047;background:rgba(30,64,175,.9)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-size:66px;text-align:center;font-weight:800;color:#fde047;line-height:1.15}
+#step{left:20px;top:858px;width:300px;font-size:24px;font-weight:800;color:#fde047}
+#tm{left:300px;top:850px;width:220px;text-align:right;font-size:58px;font-weight:800;font-variant-numeric:tabular-nums}
+#tl{left:300px;top:912px;width:220px;text-align:right;font-size:16px;color:#94a3b8}
+#bar{left:20px;top:930px;width:500px;height:10px;border-radius:5px;background:#1e293b}
+#bf{height:10px;border-radius:5px;background:linear-gradient(90deg,#22c55e,#fde047)}
+</style></head><body>
+<div class="a" id="sky"></div><div class="a" id="sun"></div><div class="a cl" id="c1"></div><div class="a cl" id="c2"></div>
+<div class="a" id="far"></div><div class="a" id="riv"></div><div class="a" id="w1"></div><div class="a" id="w2"></div><div class="a" id="near"></div>
+<div class="a" id="boat"></div><div id="pp"></div>
+<div class="a" id="ov"></div><div class="a" id="panel"></div><div class="a" id="cap"></div>
+<div class="a" id="step"></div><div class="a" id="tm"></div><div class="a" id="tl">মোট সময় (মিনিট)</div>
+<div class="a" id="bar"><div id="bf"></div></div>
+<script>
+const $=i=>document.getElementById(i),cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),ss=x=>{x=cl(x);return x*x*(3-2*x)},lp=(a,b,k)=>a+(b-a)*k;
+const N=[['S','১ মিনিট','#ef4444'],['A','২ মিনিট','#f59e0b'],['I','৫ মিনিট','#16a34a'],['F','১০ মিনিট','#9333ea']];
+const SX=[100,220,340,460],NEAR=800,FAR=312,NB=612,FB=402;
+// [board, depart, arrive, leave, dir, who]
+const C=[[54.4,55.2,59.4,60.2,'u',[0,1]],[69.2,70,73,73.8,'d',[0]],[74.8,75.6,84.4,85.2,'u',[2,3]],[90.7,91.5,96.3,97.1,'d',[1]],[98.8,99.6,107.8,108.6,'u',[0,1]]];
+const TK=[[0,0],[55.2,0],[59.4,2],[70,2],[73,3],[75.6,3],[84.4,13],[91.5,13],[96.3,15],[99.6,15],[107.8,17]];
+const pp=$('pp');N.forEach((n,i)=>{const d=document.createElement('div');d.className='a p';d.id='p'+i;d.innerHTML=`<div class="c">${n[1]}</div><div class="h"></div><div class="b" style="background:${n[2]}">${n[0]}</div>`;pp.appendChild(d)});
+function boatY(t){let y=NB;for(const c of C){const a=c[4]=='u'?NB:FB,b=c[4]=='u'?FB:NB;if(t>=c[2])y=b;else if(t>c[1])return lp(a,b,ss((t-c[1])/(c[2]-c[1])));else break}return y}
+function pos(i,t){let side=0;const bank=s=>[SX[i],s?FAR:NEAR];
+ for(const c of C){if(!c[5].includes(i))continue;const[b0,t0,t1,d1,dir,who]=c,from=dir=='u'?0:1,to=1-from;
+  const seat=tt=>[270+(who.length==1?0:(who.indexOf(i)?34:-34)),boatY(tt)-10];
+  if(t<b0)return bank(side);
+  if(t<t0){const k=ss((t-b0)/(t0-b0)),a=bank(from),s=seat(t0);return[lp(a[0],s[0],k),lp(a[1],s[1],k)]}
+  if(t<t1)return seat(t);
+  if(t<d1){const k=ss((t-t1)/(d1-t1)),s=seat(t1),a=bank(to);return[lp(s[0],a[0],k),lp(s[1],a[1],k)]}
+  side=to}
+ return bank(side)}
+const R=['নৌকায় একসঙ্গে সর্বোচ্চ দুজন যেতে পারবে','সময় নির্ভর করবে সবচেয়ে ধীরগতির মানুষের ওপর','প্রতিবার নৌকা এক পাশ থেকে অন্য পাশে যেতে হবে'];
+const CAPS=[[0,9.6,'৪ জন মানুষ, একটি ছোট নৌকা এবং একটি নদী!'],[9.6,39,'নিয়ম ও সময়'],[39,53,'চ্যালেঞ্জ: মাত্র ১৭ মিনিট!'],[53,69.5,'ধাপ ১: S ও A নদী পার হয়'],[69.5,75,'ধাপ ২: S একা ফিরে আসে'],[75,91,'ধাপ ৩: I ও F নদী পার হয়'],[91,99,'ধাপ ৪: A একা ফিরে আসে'],[99,112.4,'ধাপ ৫: S ও A শেষবার পার হয়'],[112.4,200,'সফল!']];
+const STEPS=[[55,69.5,'S + A → 2 Minutes'],[69.5,75,'S ← 1 Minute'],[75,91,'I + F → 10 Minutes'],[91,99,'A ← 2 Minutes'],[99,112.4,'S + A → 2 Minutes']];
+let lastK='';
+function ov(h,k,op){if(k!==lastK){$('ov').innerHTML=h;lastK=k}$('ov').style.opacity=op}
+window.render=function(t){
+ $('c1').style.left=((t*9)%700-120)+'px';$('c1').style.top='60px';$('c2').style.left=((t*6+300)%700-120)+'px';$('c2').style.top='120px';
+ $('w1').style.backgroundPosition=(t*30)+'px 0';$('w2').style.backgroundPosition=(-t*22)+'px '+(Math.sin(t)*3)+'px';
+ const by=boatY(t);$('boat').style.top=(by-20+Math.sin(t*3)*3)+'px';
+ let act=-1;[[9.8,11.2],[11.4,14.8],[15,17.8],[18.1,21.1],[21.3,24.8]].forEach((r,j)=>{if(t>=r[0]&&t<r[1])act=Math.min(j,3)});
+ if(t>=11.2&&t<14.8)act=0;if(t>=9.8&&t<11.2)act=0;
+ for(let i=0;i<4;i++){const p=pos(i,t),e=$('p'+i);let s=1,dy=Math.sin(t*3+i)*1.5;
+  if(act==i)s=1.18;if(t>=112.4&&Math.abs(p[1]-FAR)<4){dy=-Math.abs(Math.sin(t*5+i))*16;}
+  e.style.left=(p[0]-32)+'px';e.style.top=(p[1]-112+dy)+'px';e.style.transform=`scale(${s})`;e.style.transformOrigin='50% 100%'}
+ let cap='',st='';for(const c of CAPS)if(t>=c[0]&&t<c[1])cap=c[2];for(const c of STEPS)if(t>=c[0]&&t<c[1])st=c[2];
+ $('cap').textContent=cap;$('step').textContent=st;
+ let v=0;for(let i=0;i<TK.length-1;i++)if(t>=TK[i][0]&&t<=TK[i+1][0]){v=lp(TK[i][1],TK[i+1][1],(t-TK[i][0])/(TK[i+1][0]-TK[i][0]))}if(t>TK[TK.length-1][0])v=17;
+ const vis=cl((t-39)/1.2);$('tm').style.opacity=vis;$('tl').style.opacity=vis;$('bar').style.opacity=vis;
+ $('tm').textContent='00:'+String(Math.round(v)).padStart(2,'0');$('bf').style.width=(v/17*100)+'%';
+ // overlays
+ if(t>=9.8&&t<25){const h=`<div class="grid">${N.map((n,i)=>`<div class="card ${act==i?'on':''}">${n[0]}<br>${n[1]}</div>`).join('')}</div>`;ov(h,'g'+act,cl((t-9.8)/.4))}
+ else if(t>=25&&t<39){const a=t<31.4?0:t<36.1?1:2,show=t>=27.3?(t<31.4?1:t<36.1?2:3):0;
+  const h=R.map((r,i)=>i<show?`<div class="card ${a==i?'on':''}">${i+1}. ${r}</div>`:'').join('');ov(h,'r'+a+show,cl((t-25)/.5)*cl((39-t)/.4))}
+ else if(t>=39&&t<53){const q=t>=49.6,h=`<div class="big">${q?'প্রশ্ন হলো, কীভাবে সম্ভব?':'১৭ মিনিট!'}</div>`+(q?'<div class="big" style="font-size:120px">?</div>':'');ov(h,'c'+q,cl((t-39)/.5)*cl((53-t)/.4))}
+ else if(t>=112.4){ov(`<div class="big" style="color:#4ade80;font-size:76px">SUCCESS!</div><div class="big" style="font-size:44px;color:#fff">17 MINUTES COMPLETE!</div>`,'s',cl((t-112.4)/.5))}
+ else ov('','n',0);
+}
+render(0);
+</script></body></html>
